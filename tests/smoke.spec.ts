@@ -26,7 +26,7 @@ test('Admin filter by user', async ({ page }) => {
   await expect(page.getByRole('cell', { name: 'testcomprauno@yopmail.com' })).toBeVisible();
 });
 
-test.only('Admin new blog', async ({ page }) => {
+test('Admin new blog', async ({ page }) => {
   const postTitle = `E2E Post ${Date.now()}`;
   await page.getByTestId('nav-admin-blog').click();
   await page.getByRole('link', { name: '+ Nuevo Post' }).click();
