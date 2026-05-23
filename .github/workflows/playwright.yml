@@ -5,6 +5,14 @@ on:
     branches: [master, feature/playwright, feature/second_class ]
   pull_request:
     branches: [master, feature/playwright, feature/second_class ]
+  workflow_dispatch: 
+    inputs:
+      environment:
+        description: "Ambiente de Pruebas"
+        required: true
+        default: "staging"
+        type: choice
+        options: [staging]
 
 jobs:
   test:
@@ -28,9 +36,20 @@ jobs:
       - name: Instalar Chromium
         run: npx playwright install chromium --with-deps
 
+      - name: Crear archivo .env desde secrets
+        run: | 
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env
+          echo "STUDENT_PASSWORD=${{ secrets.STUDENT_PASSWORD }}" >> .env
+          echo "INVALID_PASSWORD=${{ secrets.INVALID_PASSWORD }}" >> .env
+          
       - name: Ejecutar tests
         run: npx playwright test
 
+      - name: Limpiar .env
+        if: always()
+        run: rm -rf .env
+        
       - name: Subir reporte html
         uses: actions/upload-artifact@v4
         if: ${{!cancelled()}}
